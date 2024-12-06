@@ -7,6 +7,7 @@ b = float(input("x-axis limitation:").strip())
 x0 = float(input("Initial x-value:").strip())
 y0 = float(input("Initial y-value:").strip())
 user = str(input("Which method would you like to use? Type 'euler' for euler and 'runge-kutta' for rk4:").strip())
+x,y = sp.symbols("x,y")
 
 def function(func):
     func = sp.sympify(func)
