@@ -5,12 +5,15 @@ import numpy as np
 
 class solver:
 
+# get_function() -> Takes a function of x and y as an input. Make sure to use correct python syntax and put everything in curved brackets.
+#   --> Example: solver.get_function("x+y"), The diff.eq. would then be: y' = x+y and it will be numerically solved for y.
     def get_function(self,func):
         x,y = sp.symbols("x,y")
         func = sp.sympify(func)
         f = sp.lambdify((x,y), func)
         return f
 
+    # optional plot with matplotlib, pretty self-explanatory
     def plot(self,x,y,xlabel,ylabel,title):
         plt.plot(x,y)
         plt.xlabel(xlabel)
@@ -19,6 +22,9 @@ class solver:
         plt.grid()
         plt.show()
 
+# You can choose between 2 methods to solve the ODE numerically : euler and rk4. Those take the function f from before
+#   as an input and 2 Initial conditions x0 and y0 as well as an x-axis bound. If n is a high number the result is more accurate.
+# Both return arrays with the x,y values
     def solve_euler(self,f,x0,y0,n,bound):
         if n <= 0:
             raise ValueError("n must be greater than zero.")
@@ -54,15 +60,17 @@ class solver:
 
         return x, y
 
+# Allows you to get the y-value from a specific x-value
+# You can adjust the decimal places, note that rk4 is more accurate
     def get_value(self,x,y,val,dec):
         function = interp1d(x,y,kind="cubic")
         num = np.round(function(val),dec)
         return num
 
 
+# Basic Example
 solver = solver()
-
 f = solver.get_function("cos(x)")
-x,y = (solver.solve_rk4(f,0,0,10000,10.1))
+x,y = solver.solve_rk4(f,0,1,10000,10.1)
 solver.plot(x,y,"x","y","rk4 solver")
 print(solver.get_value(x,y,10,5))
