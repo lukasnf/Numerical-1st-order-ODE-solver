@@ -10,7 +10,7 @@ matplotlib
 sympy
 Install missing dependencies using `pip`:
 ```bash
-pip install matplotlib sympy
+pip install matplotlib sympy numpy
 ```
 
 You can modify the script to add more methods, adjust default parameters, or change visualization settings.
