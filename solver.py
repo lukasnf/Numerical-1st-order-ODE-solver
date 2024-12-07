@@ -15,6 +15,8 @@ def function(func):
     return f
 
 def runge_kutta4(f,x0,y0,n,a,b):
+    if n <= 0:
+        raise ValueError("n must be greater than zero.")
     y = [y0]
     x = [x0]
     h = (b-a)/n
@@ -33,6 +35,8 @@ def runge_kutta4(f,x0,y0,n,a,b):
     return x,y
 
 def euler(f,x0,y0,n,a,b):
+    if n <= 0:
+        raise ValueError("n must be greater than zero.")
     y = [y0]
     x = [x0]
     h = (b-a)/n
@@ -51,8 +55,11 @@ f = function(func)
 if user == "runge-kutta":
     x,y = runge_kutta4(f,x0,y0,n,0,b)
 
-else: x,y = euler(f,x0,y0,n,0,b)
+elif user == "euler":
+    x,y = euler(f,x0,y0,n,0,b)
 
+else:
+    raise ValueError("Invalid method.")
 
 plt.plot(x,y,label = f"{user.capitalize()}")
 plt.grid()
