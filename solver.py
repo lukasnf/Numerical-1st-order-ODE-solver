@@ -1,70 +1,68 @@
 import matplotlib.pyplot as plt
 import sympy as sp
+from scipy.interpolate import interp1d
+import numpy as np
 
-func = input("Enter a function of x,y -> y'=").strip()
-n = int(input("How accurate should we solve the system? -> higher n results in higher accuracy").strip())
-b = float(input("x-axis limitation:").strip())
-x0 = float(input("Initial x-value:").strip())
-y0 = float(input("Initial y-value:").strip())
-user = str(input("Which method would you like to use? Type 'euler' for euler and 'runge-kutta' for rk4:").strip())
-x,y = sp.symbols("x,y")
+class solver:
 
-def function(func):
-    func = sp.sympify(func)
-    f = sp.lambdify((x,y), func)
-    return f
+    def get_function(self,func):
+        x,y = sp.symbols("x,y")
+        func = sp.sympify(func)
+        f = sp.lambdify((x,y), func)
+        return f
 
-def runge_kutta4(f,x0,y0,n,a,b):
-    if n <= 0:
-        raise ValueError("n must be greater than zero.")
-    y = [y0]
-    x = [x0]
-    h = (b-a)/n
-    for i in range(n):
-        k1 = h * f(x[-1],y[-1])
-        k2 = h * f(x[-1]+h/2,y[-1]+k1/2)
-        k3 = h * f(x[-1]+h/2,y[-1]+k2/2)
-        k4 = h * f(x[-1]+h,y[-1]+k3)
+    def plot(self,x,y,xlabel,ylabel,title):
+        plt.plot(x,y)
+        plt.xlabel(xlabel)
+        plt.ylabel(ylabel)
+        plt.title(title)
+        plt.grid()
+        plt.show()
 
-        y_r = y[-1]+(k1+2*k2+2*k3+k4)/6
-        x_r = x[-1]+h
+    def solve_euler(self,f,x0,y0,n,bound):
+        if n <= 0:
+            raise ValueError("n must be greater than zero.")
+        y = [y0]
+        x = [x0]
+        h =  (bound-x0)/n
+        for i in range(n):
+            y_e = y[-1] + h * f(x[-1], y[-1])
+            x_e = x[-1] + h
 
-        x.append(x_r)
-        y.append(y_r)
+            x.append(x_e)
+            y.append(y_e)
 
-    return x,y
+        return x, y
 
-def euler(f,x0,y0,n,a,b):
-    if n <= 0:
-        raise ValueError("n must be greater than zero.")
-    y = [y0]
-    x = [x0]
-    h = (b-a)/n
-    for i in range(n):
-        y_e = y[-1]+h*f(x[-1],y[-1])
-        x_e = x[-1]+h
+    def solve_rk4(self,f,x0,y0,n,bound):
+        if n <= 0:
+            raise ValueError("n must be greater than zero.")
+        y = [y0]
+        x = [x0]
+        h = (bound-x0) / n
+        for i in range(n):
+            k1 = h * f(x[-1], y[-1])
+            k2 = h * f(x[-1] + h / 2, y[-1] + k1 / 2)
+            k3 = h * f(x[-1] + h / 2, y[-1] + k2 / 2)
+            k4 = h * f(x[-1] + h, y[-1] + k3)
 
-        x.append(x_e)
-        y.append(y_e)
+            y_r = y[-1] + (k1 + 2 * k2 + 2 * k3 + k4) / 6
+            x_r = x[-1] + h
 
-    return x,y
+            x.append(x_r)
+            y.append(y_r)
+
+        return x, y
+
+    def get_value(self,x,y,val,dec):
+        function = interp1d(x,y,kind="cubic")
+        num = np.round(function(val),dec)
+        return num
 
 
-f = function(func)
+solver = solver()
 
-if user == "runge-kutta":
-    x,y = runge_kutta4(f,x0,y0,n,0,b)
-
-elif user == "euler":
-    x,y = euler(f,x0,y0,n,0,b)
-
-else:
-    raise ValueError("Invalid method.")
-
-plt.plot(x,y,label = f"{user.capitalize()}")
-plt.grid()
-plt.title("Numerical 1st order ODE solver")
-plt.xlabel('x')
-plt.ylabel('y')
-plt.legend()
-plt.show()
+f = solver.get_function("cos(x)")
+x,y = (solver.solve_rk4(f,0,0,10000,10.1))
+solver.plot(x,y,"x","y","rk4 solver")
+print(solver.get_value(x,y,10,5))
