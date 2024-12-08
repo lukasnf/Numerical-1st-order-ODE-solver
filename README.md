@@ -6,8 +6,6 @@ This project is a Python implementation for solving first-order ordinary differe
 
 Ensure the following Python libraries are installed:
 
-matplotlib
-sympy
 Install missing dependencies using `pip`:
 ```bash
 pip install matplotlib sympy numpy
